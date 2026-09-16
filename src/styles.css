@@ -1,0 +1,119 @@
+import { useRef, useState } from 'react';
+
+function FolderPicker({ label, hint, value, onChange }) {
+  const inputRef = useRef(null);
+
+  const handleOpenPicker = () => {
+    inputRef.current?.click();
+  };
+
+  return (
+    <div className="folder-picker">
+      <label className="field-label">{label}</label>
+      <div className="picker-row">
+        <button type="button" className="select-button" onClick={handleOpenPicker}>
+          Choose Folder
+        </button>
+        <span className="selected-value">{value || 'No folder selected'}</span>
+      </div>
+      <input
+        ref={inputRef}
+        type="file"
+        webkitdirectory="true"
+        directory="true"
+        multiple
+        onChange={onChange}
+        className="hidden-input"
+      />
+      <small className="field-hint">{hint}</small>
+    </div>
+  );
+}
+
+export default function App() {
+  const [inputFolder, setInputFolder] = useState('');
+  const [referenceFolder, setReferenceFolder] = useState('');
+  const [outputFolder, setOutputFolder] = useState('');
+
+  const allSelected = inputFolder && referenceFolder && outputFolder;
+
+  const getFolderName = (event) => {
+    const files = event.target.files;
+    if (!files || files.length === 0) return '';
+
+    const firstPath = files[0].webkitRelativePath || '';
+    const folderName = firstPath.split('/')[0] || 'Selected folder';
+    return folderName;
+  };
+
+  const handleInputFolderChange = (event) => {
+    const selectedFolder = getFolderName(event);
+    setInputFolder(selectedFolder);
+  };
+
+  const handleReferenceFolderChange = (event) => {
+    const selectedFolder = getFolderName(event);
+    setReferenceFolder(selectedFolder);
+  };
+
+  const handleOutputFolderChange = (event) => {
+    const selectedFolder = getFolderName(event);
+    setOutputFolder(selectedFolder);
+  };
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+
+    if (!allSelected) {
+      alert('Please select all three folders before continuing.');
+      return;
+    }
+
+    const request = {
+      inputFolder,
+      referenceFolder,
+      outputFolder
+    };
+
+    console.log('Folder request:', request);
+    alert(`Folders selected successfully:\n\nInput: ${inputFolder}\nReference: ${referenceFolder}\nOutput: ${outputFolder}`);
+  };
+
+  return (
+    <main className="app-shell">
+      <section className="panel">
+        <div className="header-block">
+          <p className="eyebrow">Workflow Setup</p>
+          <h1>JPEG to GeoTIFF Conversion</h1>
+        </div>
+
+        <form onSubmit={handleSubmit} className="folder-form">
+          <FolderPicker
+            label="Input Folder"
+            hint="Choose the folder containing JPEG source files"
+            value={inputFolder}
+            onChange={handleInputFolderChange}
+          />
+
+          <FolderPicker
+            label="Reference Folder"
+            hint="Choose the folder that contains the reference datasets"
+            value={referenceFolder}
+            onChange={handleReferenceFolderChange}
+          />
+
+          <FolderPicker
+            label="Output Folder"
+            hint="Choose the destination folder for the generated GeoTIFF outputs"
+            value={outputFolder}
+            onChange={handleOutputFolderChange}
+          />
+
+          <button type="submit" className="submit-button" disabled={!allSelected}>
+            Continue
+          </button>
+        </form>
+      </section>
+    </main>
+  );
+}
