@@ -1,27 +1,17 @@
-# JPEG to GeoTIFF Overlay Tool
+# JPEG to GeoTIFF Overlay Prototype
 
-This is a browser-based prototype for:
+Open `index.html` in Google Chrome. The app uses CDN-hosted GeoTIFF.js and OpenCV.js, so an internet connection is needed when it starts.
 
-- selecting an input JPEG folder
-- selecting a reference GeoTIFF folder
-- choosing a target output folder
-- matching the JPEG to the lower-resolution GeoTIFF by feature detection
-- overlaying the JPEG into the correct spatial location
-- exporting the result to the output folder
+Workflow:
 
-The app is designed to run directly in Google Chrome without requiring a local server.
+1. Choose an input folder and select a JPEG.
+2. Choose a reference folder and select a GeoTIFF.
+3. Inspect the detected dimensions, CRS, origin, and pixel size.
+4. Choose an output folder.
+5. Run ORB feature matching with RANSAC homography estimation.
+6. Review the overlay preview and the reported inlier count.
+7. Save an RGB GeoTIFF using the reference image's geospatial metadata.
 
-## Open it directly in Chrome
+This is intentionally a **prototype**. It rejects weak matches, but it cannot guarantee survey-grade accuracy. Perspective distortion, terrain relief, lens distortion, different seasons, or repetitive imagery can produce a plausible-looking but inaccurate result. Validate exported files with known control points before using them for quantitative measurements.
 
-1. Download or clone the repository.
-2. Open the project folder.
-3. Double-click `index.html`.
-4. Chrome should open the app.
-
-## Important note
-
-This is a prototype georeferencing workflow. It uses browser-side feature matching and the result is best-effort. For accurate quantitative spatial measurements, the final result should be validated with known ground control points and a proper coordinate reference system.
-
-## Suggested next step
-
-If you provide sample JPEG and reference TIFF files, the matching logic can be refined to support the actual image pair used in your project.
+Chrome's File System Access API is required to write directly to the selected output folder. If the browser cannot provide that API, the app will not pretend that a PNG or non-georeferenced file is a GeoTIFF.
