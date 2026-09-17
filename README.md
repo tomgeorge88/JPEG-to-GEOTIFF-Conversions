@@ -1,17 +1,7 @@
 # JPEG to GeoTIFF Overlay Prototype
 
-Open `index.html` in Google Chrome. The app uses CDN-hosted GeoTIFF.js and OpenCV.js, so an internet connection is needed when it starts.
+This version avoids direct `.length` calls on optional raster and OpenCV results. It normalizes GeoTIFF raster output, counts OpenCV matches with its API, and counts RANSAC inliers with `mask.rows` and `mask.ucharAt()`.
 
-Workflow:
+Open `index.html` in Chrome. The app loads GeoTIFF.js and OpenCV.js from CDNs, so an internet connection is required. Chrome's File System Access API is required for writing into the selected output folder.
 
-1. Choose an input folder and select a JPEG.
-2. Choose a reference folder and select a GeoTIFF.
-3. Inspect the detected dimensions, CRS, origin, and pixel size.
-4. Choose an output folder.
-5. Run ORB feature matching with RANSAC homography estimation.
-6. Review the overlay preview and the reported inlier count.
-7. Save an RGB GeoTIFF using the reference image's geospatial metadata.
-
-This is intentionally a **prototype**. It rejects weak matches, but it cannot guarantee survey-grade accuracy. Perspective distortion, terrain relief, lens distortion, different seasons, or repetitive imagery can produce a plausible-looking but inaccurate result. Validate exported files with known control points before using them for quantitative measurements.
-
-Chrome's File System Access API is required to write directly to the selected output folder. If the browser cannot provide that API, the app will not pretend that a PNG or non-georeferenced file is a GeoTIFF.
+The result is a prototype and must be checked with known control points before quantitative use.
